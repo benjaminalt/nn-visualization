@@ -1,6 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
-from saturation_plot import plot_saturations
+from nn_visualization.saturation_plot import plot_saturations
 
 
 def main():

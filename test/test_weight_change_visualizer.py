@@ -1,11 +1,10 @@
 import torch
+from nn_visualization.weight_magnitude_visualizer import WeightChangeVisualizer
 from tqdm import tqdm
-
-from nn_visualization.gradient_magnitude_visualizer import GradientMagnitudeVisualizer
 
 
 def main():
-    viz = GradientMagnitudeVisualizer()
+    viz = WeightChangeVisualizer()
     net = torch.nn.Sequential(
         torch.nn.Linear(8, 24),
         torch.nn.SELU(),
@@ -21,13 +20,14 @@ def main():
     ds = torch.utils.data.TensorDataset(inputs, labels)
     dl = torch.utils.data.DataLoader(ds, batch_size=16, drop_last=True)
     optim = torch.optim.Adam(net.parameters(), lr=1e-3)
-    viz.register_hooks(net)
+    viz.set_params_before(net)
     for inp, label in tqdm(dl):
         outp = net(inp)
         loss = torch.nn.MSELoss()(outp, label)
         optim.zero_grad()
         loss.backward()
         optim.step()
+    viz.set_params_after(net)
     viz.plot_bar(show=True)
 
 
